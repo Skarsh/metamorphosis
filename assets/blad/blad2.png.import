@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2mkhxascfl10"
-path="res://.godot/imported/Larve4Head1.png-f36c93c197579ba67a48d27244f71e0b.ctex"
+uid="uid://dglmy0vqhp82o"
+path="res://.godot/imported/blad2.png-34b2e87552032f5c9480b1b7297dae07.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Larve4Head1.png"
-dest_files=["res://.godot/imported/Larve4Head1.png-f36c93c197579ba67a48d27244f71e0b.ctex"]
+source_file="res://assets/blad/blad2.png"
+dest_files=["res://.godot/imported/blad2.png-34b2e87552032f5c9480b1b7297dae07.ctex"]
 
 [params]
 

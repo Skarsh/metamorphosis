@@ -1,8 +1,12 @@
 extends Node2D
 
-var head_sprite = preload("res://assets/Larve4Head1.png")
-var body_sprite = preload("res://assets/Larve4Body1.png")
-var tail_sprite = preload("res://assets/Larve4Butt1.png")
+var head_sprite = preload("res://assets/larve/Larve4Head1.png")
+var body_sprite = preload("res://assets/larve/Larve4Body1.png")
+var tail_sprite = preload("res://assets/larve/Larve4Butt1.png")
+
+var food_sound = preload("res://assets/LarvaEatFX.wav")
+
+var audio_player: AudioStreamPlayer
 
 var segment_positions = []
 var body_segments = []
@@ -83,9 +87,16 @@ func _ready():
 	viewport_size = get_viewport_rect().size
 	# Set up food sprite
 	food_sprite = Sprite2D.new()
-	food_sprite.texture = preload("res://assets/apple.png")
-	food_sprite.scale = Vector2(0.5, 0.5)
+	food_sprite.texture = preload("res://assets/blad/blad2.png")
+	food_sprite.scale = Vector2(1.0, 1.0)
 	add_child(food_sprite)
+
+    # Set up audio player
+	audio_player = AudioStreamPlayer.new()
+	audio_player.stream = food_sound
+	audio_player.volume_db = -10  # Adjust volume as needed
+	add_child(audio_player)    
+
 	new_game()
 
 func check_collision() -> bool:
@@ -128,6 +139,7 @@ func check_food_collision():
 	if body_segments.size() > 0:
 		var head = body_segments[0]
 		if head.position.distance_to(food_position) < collision_radius:
+			audio_player.play()
 			grow()
 			move_food()
 
@@ -238,7 +250,8 @@ func grow():
 	growth_time = 0.0
 
 func _input(event):
-	if event.is_action_pressed("ui_accept") and game_active:  # Space to grow
+	# TODO(Thomas): Remove this before shipping, this is just for testing
+	if event.is_action_pressed("ui_accept") and game_active:
 		grow()
 
 func new_game():

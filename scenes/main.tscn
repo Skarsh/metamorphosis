@@ -1,11 +1,15 @@
 [gd_scene load_steps=7 format=3 uid="uid://dy0pj4q08s45c"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_tdowd"]
-[ext_resource type="Texture2D" uid="uid://dmcawiftbrxcs" path="res://assets/bg.png" id="2_3u8rp"]
 [ext_resource type="PackedScene" uid="uid://b5pn6k28bg2tn" path="res://scenes/hud.tscn" id="3_vd0qr"]
-[ext_resource type="Texture2D" uid="uid://cy6n6xp3cvn0s" path="res://assets/Blad1.png" id="5_eckw7"]
 [ext_resource type="PackedScene" uid="uid://dufc8nw5g4sb6" path="res://scenes/game_over_menu.tscn" id="6_8r1mt"]
 [ext_resource type="AudioStream" uid="uid://s3meo2kr4cdg" path="res://assets/LarvaMusic2.wav" id="7_dkne3"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3mhxa"]
+load_path = "res://.godot/imported/bg.png-23a59c2e9cba2223a50fa3fe41b70b25.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1iqrc"]
+load_path = "res://.godot/imported/Blad1.png-11ec664d1667d3956808ee0d58c8b70a.ctex"
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_tdowd")
@@ -13,13 +17,13 @@ script = ExtResource("1_tdowd")
 [node name="Background" type="Sprite2D" parent="."]
 visible = false
 position = Vector2(500, 550)
-texture = ExtResource("2_3u8rp")
+texture = SubResource("CompressedTexture2D_3mhxa")
 
 [node name="Hud" parent="." instance=ExtResource("3_vd0qr")]
 
 [node name="Food" type="Sprite2D" parent="."]
 visible = false
-texture = ExtResource("5_eckw7")
+texture = SubResource("CompressedTexture2D_1iqrc")
 offset = Vector2(25, 25)
 
 [node name="GameOverMenu" parent="." instance=ExtResource("6_8r1mt")]
