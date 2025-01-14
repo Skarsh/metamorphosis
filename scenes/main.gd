@@ -139,50 +139,33 @@ func _physics_process(delta):
 	if !game_active:
 		return
 		
-	# Handle both arrow keys and WASD
-	var input = Vector2.ZERO
+	# Handle turning
+	var turn_rate = 2.5  # Adjust this value to change how sharp the snake can turn
 	
-	# Arrow keys
-	if Input.is_action_pressed("ui_right") or Input.is_action_pressed("move_right"):
-		input.x += 1
-	if Input.is_action_pressed("ui_left") or Input.is_action_pressed("move_left"):
-		input.x -= 1
-	if Input.is_action_pressed("ui_down") or Input.is_action_pressed("move_down"):
-		input.y += 1
-	if Input.is_action_pressed("ui_up") or Input.is_action_pressed("move_up"):
-		input.y -= 1
+	# Apply turning based on input
+	if Input.is_action_pressed("move_right"):  # D key
+		# Rotate current_direction clockwise
+		var angle = turn_rate * delta
+		current_direction = current_direction.rotated(angle)
+	if Input.is_action_pressed("move_left"):  # A key
+		# Rotate current_direction counter-clockwise
+		var angle = -turn_rate * delta
+		current_direction = current_direction.rotated(angle)
 	
-	# Normalize input if necessary
-	if input.length() > 0:
-		input = input.normalized()
-	
-	# Start game on first input
-	if !game_started and input.length() > 0:
+	# Start game on first forward input
+	if !game_started and Input.is_action_pressed("move_forward"):
 		start_game()
 	
 	speed_multiplier = 1.8 if Input.is_action_pressed("left_shift") else 1.0
 	
-	if input.length() > 0:
-		var new_direction = input.normalized()
-		
-		if new_direction.dot(current_direction) < -0.1:
-			match turn_behavior:
-				TurnBehavior.IGNORE:
-					new_direction = current_direction
-				
-				TurnBehavior.CIRCULAR:
-					var cross_z = current_direction.x * new_direction.y - current_direction.y * new_direction.x
-					if cross_z > 0:
-						new_direction = Vector2(-current_direction.y, current_direction.x)
-					else:
-						new_direction = Vector2(current_direction.y, -current_direction.x)
-		
-		last_direction = last_direction.lerp(new_direction, turn_speed * delta)
-		current_direction = last_direction.normalized()
-		
-		var head = body_segments[0]
-		head.position += last_direction * (base_speed * speed_multiplier) * delta
-		head.update_rotation(head.position + last_direction, head.position)
+	var head = body_segments[0]
+	if head:
+		# Only move when pressing forward
+		if Input.is_action_pressed("move_forward"):
+			head.position += current_direction * (base_speed * speed_multiplier) * delta
+			
+		# Always update rotation to show direction
+		head.update_rotation(head.position + current_direction, head.position)
 		
 		if check_collision():
 			end_game()
@@ -190,13 +173,15 @@ func _physics_process(delta):
 			
 		check_food_collision()
 		
-		time_since_record += delta
-		if time_since_record >= record_interval:
-			segment_positions.push_front(head.position)
-			time_since_record = 0
-			
-			if segment_positions.size() > max_positions:
-				segment_positions.resize(max_positions)
+		# Only record positions when moving
+		if Input.is_action_pressed("move_forward"):
+			time_since_record += delta
+			if time_since_record >= record_interval:
+				segment_positions.push_front(head.position)
+				time_since_record = 0
+				
+				if segment_positions.size() > max_positions:
+					segment_positions.resize(max_positions)
 	
 	# Update body segments
 	for i in range(1, body_segments.size()):
@@ -279,10 +264,10 @@ func new_game():
 	# Spawn initial food
 	move_food()
 	
-	# Reset position and direction
+	# Reset position and direction (starting facing upward)
 	head.position = Vector2(get_viewport_rect().size / 2)
-	current_direction = Vector2.RIGHT
-	last_direction = Vector2.RIGHT
+	current_direction = Vector2.UP
+	last_direction = Vector2.UP
 	
 	# Add initial body segments
 	grow()
