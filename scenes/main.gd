@@ -140,7 +140,7 @@ func _physics_process(delta):
 		return
 		
 	# Handle turning
-	var turn_rate = 2.5  # Adjust this value to change how sharp the snake can turn
+	var turn_rate = 5.0  # Adjust this value to change how sharp the snake can turn
 	
 	# Apply turning based on input
 	if Input.is_action_pressed("move_right"):  # D key
