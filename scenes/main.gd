@@ -1,142 +1,285 @@
 extends Node2D
 
-@export var snake_scene : PackedScene
+var head_sprite = preload("res://assets/head.png")
+var body_sprite = preload("res://assets/body.png")
+var tail_sprite = preload("res://assets/tail.png")
+
+var segment_positions = []
+var body_segments = []
+var record_interval = 0.05
+var time_since_record = 0
+var base_speed = 200
+var speed_multiplier = 1.0
+var boost_multiplier = 1.8
+
+var segment_spacing = 40
+var turn_speed = 5.0
+var last_direction = Vector2.RIGHT
+var is_growing = false
+var growth_time = 0.0
+var max_positions = 10_000
+var neck_segments = 5
+var collision_radius = 15
+var game_active = true
 
 var score: int
 var game_started: bool = false
+var food_position: Vector2
+var viewport_size: Vector2
+var food_sprite: Sprite2D
 
-# grid variables
-var cells: int = 20
-var cell_size: int = 50
+class SnakeSegment extends Node2D:
+	var sprite: Sprite2D
+	var shadow: Sprite2D
+	var segment_type: String
+	var target_rotation = 0.0
+	
+	func _init(type: String, sprite_texture: Texture2D):
+		segment_type = type
+		
+		# Shadow setup
+		shadow = Sprite2D.new()
+		shadow.texture = sprite_texture
+		shadow.centered = true
+		shadow.scale = Vector2(0.5, 0.5)
+		shadow.modulate = Color(0, 0, 0, 0.3)
+		shadow.position = Vector2(4, 4)
+		shadow.z_index = -1
+		add_child(shadow)
+		
+		# Main sprite
+		sprite = Sprite2D.new()
+		sprite.texture = sprite_texture
+		sprite.centered = true
+		sprite.scale = Vector2(0.5, 0.5)
+		add_child(sprite)
+	
+	func update_rotation(target_pos: Vector2, current_pos: Vector2):
+		if target_pos.distance_to(current_pos) > 1:
+			var direction = (target_pos - current_pos).normalized()
+			var angle = atan2(direction.y, direction.x)
+			target_rotation = rad_to_deg(angle) + 90
+			sprite.rotation_degrees = target_rotation
+			shadow.rotation_degrees = target_rotation
 
-# food variables
-var food_pos: Vector2
-var regen_food: bool = true
-
-# snake variables
-var old_data: Array
-var snake_data: Array
-var snake: Array
-
-# movement variables
-var start_pos = Vector2(9, 9)
-var up = Vector2(0, -1)
-var down = Vector2(0, 1)
-var left = Vector2(-1, 0)
-var right = Vector2(1, 0)
-var move_direction: Vector2
-var can_move: bool
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
+func _ready():
+	viewport_size = get_viewport_rect().size
+	# Set up food sprite
+	food_sprite = Sprite2D.new()
+	food_sprite.texture = preload("res://assets/apple.png")  # Make sure to create this asset
+	food_sprite.scale = Vector2(0.5, 0.5)
+	add_child(food_sprite)
 	new_game()
 
+func check_collision() -> bool:
+	var head = body_segments[0]
+	
+	# Check for wall collisions
+	if head.position.x < 0 or head.position.x > viewport_size.x or \
+	   head.position.y < 0 or head.position.y > viewport_size.y:
+		return true
+	
+	# Check for self collision
+	for i in range(neck_segments + 1, body_segments.size()):
+		var segment = body_segments[i]
+		var distance = head.position.distance_to(segment.position)
+		
+		if distance < collision_radius:
+			return true
+			
+	return false
+
+func move_food():
+	var valid_position = false
+	while not valid_position:
+		# Generate random position within viewport
+		food_position = Vector2(
+			randf_range(50, viewport_size.x - 50),
+			randf_range(50, viewport_size.y - 50)
+		)
+		
+		# Check if position is valid (not too close to snake)
+		valid_position = true
+		for segment in body_segments:
+			if segment.position.distance_to(food_position) < collision_radius * 2:
+				valid_position = false
+				break
+	
+	food_sprite.position = food_position
+
+func check_food_collision():
+	if body_segments.size() > 0:
+		var head = body_segments[0]
+		if head.position.distance_to(food_position) < collision_radius:
+			grow()
+			move_food()
+
+var current_direction = Vector2.RIGHT
+enum TurnBehavior { IGNORE, CIRCULAR }
+var turn_behavior = TurnBehavior.CIRCULAR
+
+func _physics_process(delta):
+	if !game_active:
+		return
+		
+	# Handle both arrow keys and WASD
+	var input = Vector2.ZERO
+	
+	# Arrow keys
+	if Input.is_action_pressed("ui_right") or Input.is_action_pressed("move_right"):
+		input.x += 1
+	if Input.is_action_pressed("ui_left") or Input.is_action_pressed("move_left"):
+		input.x -= 1
+	if Input.is_action_pressed("ui_down") or Input.is_action_pressed("move_down"):
+		input.y += 1
+	if Input.is_action_pressed("ui_up") or Input.is_action_pressed("move_up"):
+		input.y -= 1
+	
+	# Normalize input if necessary
+	if input.length() > 0:
+		input = input.normalized()
+	
+	# Start game on first input
+	if !game_started and input.length() > 0:
+		start_game()
+	
+	speed_multiplier = 1.8 if Input.is_action_pressed("left_shift") else 1.0
+	
+	if input.length() > 0:
+		var new_direction = input.normalized()
+		
+		if new_direction.dot(current_direction) < -0.1:
+			match turn_behavior:
+				TurnBehavior.IGNORE:
+					new_direction = current_direction
+				
+				TurnBehavior.CIRCULAR:
+					var cross_z = current_direction.x * new_direction.y - current_direction.y * new_direction.x
+					if cross_z > 0:
+						new_direction = Vector2(-current_direction.y, current_direction.x)
+					else:
+						new_direction = Vector2(current_direction.y, -current_direction.x)
+		
+		last_direction = last_direction.lerp(new_direction, turn_speed * delta)
+		current_direction = last_direction.normalized()
+		
+		var head = body_segments[0]
+		head.position += last_direction * (base_speed * speed_multiplier) * delta
+		head.update_rotation(head.position + last_direction, head.position)
+		
+		if check_collision():
+			end_game()
+			return
+			
+		check_food_collision()
+		
+		time_since_record += delta
+		if time_since_record >= record_interval:
+			segment_positions.push_front(head.position)
+			time_since_record = 0
+			
+			if segment_positions.size() > max_positions:
+				segment_positions.resize(max_positions)
+	
+	# Update body segments
+	for i in range(1, body_segments.size()):
+		var segment = body_segments[i]
+		var target_idx = i * 2
+		
+		if target_idx < segment_positions.size():
+			var target_pos = segment_positions[target_idx]
+			
+			if is_growing && i == body_segments.size() - 1:
+				growth_time += delta * 3
+				var growth_factor = min(1.0, growth_time)
+				var start_pos = body_segments[i-1].position
+				segment.position = start_pos.lerp(target_pos, growth_factor)
+				segment.sprite.scale = Vector2(0.5, 0.5) * growth_factor
+				segment.shadow.scale = segment.sprite.scale
+				
+				if growth_factor >= 1.0:
+					is_growing = false
+					growth_time = 0.0
+					score += 1
+					$Hud.get_node("ScoreLabel").text = "SCORE: " + str(score)
+			else:
+				segment.position = segment.position.lerp(target_pos, 0.2)
+				
+			if target_idx + 1 < segment_positions.size():
+				segment.update_rotation(segment_positions[target_idx + 1], target_pos)
+
+func grow():
+	if is_growing:
+		return
+		
+	var new_segment: SnakeSegment
+	
+	if body_segments.size() == 0:
+		new_segment = SnakeSegment.new("head", head_sprite)
+	elif body_segments.size() == 1:
+		new_segment = SnakeSegment.new("body", body_sprite)
+	else:
+		if body_segments[-1].segment_type == "tail":
+			body_segments[-1].sprite.texture = body_sprite
+			body_segments[-1].segment_type = "body"
+		new_segment = SnakeSegment.new("tail", tail_sprite)
+	
+	if body_segments.size() > 0:
+		new_segment.position = body_segments[-1].position
+		new_segment.sprite.scale = Vector2(0.05, 0.05)
+		new_segment.shadow.scale = new_segment.sprite.scale
+	
+	body_segments.append(new_segment)
+	add_child(new_segment)
+	
+	is_growing = true
+	growth_time = 0.0
+
+func _input(event):
+	if event.is_action_pressed("ui_accept") and game_active:  # Space to grow
+		grow()
 
 func new_game():
+	# Reset game state
 	get_tree().paused = false
-	get_tree().call_group("segments", "queue_free")
 	$GameOverMenu.hide()
+	game_active = true
+	game_started = false
 	score = 0
 	$Hud.get_node("ScoreLabel").text = "SCORE: " + str(score)
-	move_direction = up
-	can_move = true
-	generate_snake()
+	
+	# Clear existing segments
+	for segment in body_segments:
+		segment.queue_free()
+	body_segments.clear()
+	segment_positions.clear()
+	
+	# Create initial snake
+	var head = SnakeSegment.new("head", head_sprite)
+	add_child(head)
+	body_segments.append(head)
+	
+	# Spawn initial food
 	move_food()
-
-func generate_snake():
-	old_data.clear()
-	snake_data.clear()
-	snake.clear()
-	# starting with the start_pos, create tail segments vertically down
-	for i in range(3):
-		add_segment(start_pos + Vector2(0, i))
-
-
-func add_segment(pos: Vector2):
-	snake_data.append(pos)
-	var SnakeSegment = snake_scene.instantiate()
-	SnakeSegment.position = (pos * cell_size) + Vector2(0, cell_size)
-	add_child(SnakeSegment)
-	snake.append(SnakeSegment)
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	move_snake()
-
-func move_snake():
-	if can_move:
-		if Input.is_action_just_pressed("move_down") and move_direction != up:
-			move_direction = down
-			can_move = false
-			if not game_started:
-				start_game()
-		if Input.is_action_just_pressed("move_up") and move_direction != down:
-			move_direction = up
-			can_move = false
-			if not game_started:
-				start_game()
-		if Input.is_action_just_pressed("move_left") and move_direction != right:
-			move_direction = left
-			can_move = false
-			if not game_started:
-				start_game()
-		if Input.is_action_just_pressed("move_right") and move_direction != left:
-			move_direction = right
-			can_move = false
-			if not game_started:
-				start_game()
+	
+	# Reset position and direction
+	head.position = Vector2(get_viewport_rect().size / 2)
+	current_direction = Vector2.RIGHT
+	last_direction = Vector2.RIGHT
+	
+	# Add initial body segments
+	grow()
+	grow()
 
 func start_game():
 	game_started = true
-	$MoveTimer.start()
-
-func _on_move_timer_timeout() -> void:
-	# allow snake movement
-	can_move = true
-	old_data = [] + snake_data
-	snake_data[0] += move_direction
-	for i in range(len(snake_data)):
-		# move all segments along by one
-		if i > 0:
-			snake_data[i] = old_data[i - 1]
-		snake[i].position = (snake_data[i] * cell_size) + Vector2(0, cell_size)
-	check_out_of_bounds()
-	check_self_eaten()
-	check_food_eaten()
-
-func check_out_of_bounds():
-	if snake_data[0].x < 0 or snake_data[0].x > cells - 1 or snake_data[0].y < 0 or snake_data[0].y > cells - 1:
-		end_game()
-
-func check_self_eaten():
-	for i in range(1, len(snake_data)):
-		if snake_data[0] == snake_data[i]:
-			end_game()
-
-func move_food():
-	while regen_food:
-		regen_food = false
-		food_pos = Vector2(randi_range(0, cells - 1), randi_range(0, cells - 1))
-		for i in snake_data:
-			if food_pos == i:
-				regen_food = true
-	$Food.position = (food_pos * cell_size) + Vector2(0, cell_size)
-	regen_food = true
-
-func check_food_eaten():
-	# if snake eats the food, add a segment and move the food
-	if snake_data[0] == food_pos:
-		score += 1
-		$Hud.get_node("ScoreLabel").text = "SCORE: " + str(score)
-		add_segment(old_data[-1])
-		move_food()
+	game_active = true
 
 func end_game():
-	$GameOverMenu.show()
-	$MoveTimer.stop()
+	game_active = false
 	game_started = false
+	$GameOverMenu.show()
 	get_tree().paused = true
-
 
 func _on_game_over_menu_restart() -> void:
 	new_game()
