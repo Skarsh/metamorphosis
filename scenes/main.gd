@@ -1,8 +1,8 @@
 extends Node2D
 
-var head_sprite = preload("res://assets/head.png")
-var body_sprite = preload("res://assets/body.png")
-var tail_sprite = preload("res://assets/tail.png")
+var head_sprite = preload("res://assets/Larve4Head1.png")
+var body_sprite = preload("res://assets/Larve4Body1.png")
+var tail_sprite = preload("res://assets/Larve4Butt1.png")
 
 var segment_positions = []
 var body_segments = []
@@ -41,32 +41,49 @@ class SnakeSegment extends Node2D:
 		shadow = Sprite2D.new()
 		shadow.texture = sprite_texture
 		shadow.centered = true
-		shadow.scale = Vector2(0.5, 0.5)
 		shadow.modulate = Color(0, 0, 0, 0.3)
 		shadow.position = Vector2(4, 4)
 		shadow.z_index = -1
+		
+		# Set scale based on segment type
+		if type == "head":
+			shadow.scale = Vector2(2.0, 2.0)
+		else:
+			shadow.scale = Vector2(0.5, 0.5)
+			
 		add_child(shadow)
 		
 		# Main sprite
 		sprite = Sprite2D.new()
 		sprite.texture = sprite_texture
 		sprite.centered = true
-		sprite.scale = Vector2(0.5, 0.5)
+		
+		# Set scale based on segment type
+		if type == "head":
+			sprite.scale = Vector2(2.0, 2.0)
+			
 		add_child(sprite)
 	
 	func update_rotation(target_pos: Vector2, current_pos: Vector2):
-		if target_pos.distance_to(current_pos) > 1:
-			var direction = (target_pos - current_pos).normalized()
-			var angle = atan2(direction.y, direction.x)
-			target_rotation = rad_to_deg(angle) + 90
-			sprite.rotation_degrees = target_rotation
-			shadow.rotation_degrees = target_rotation
+		var direction = (target_pos - current_pos).normalized()
+		var angle = atan2(direction.y, direction.x)
+		
+		match segment_type:
+			"head":
+				target_rotation = rad_to_deg(angle) + 90
+			"body":
+				target_rotation = rad_to_deg(angle) + 90
+			"tail":
+				target_rotation = rad_to_deg(angle) - 90
+		
+		sprite.rotation_degrees = target_rotation
+		shadow.rotation_degrees = target_rotation
 
 func _ready():
 	viewport_size = get_viewport_rect().size
 	# Set up food sprite
 	food_sprite = Sprite2D.new()
-	food_sprite.texture = preload("res://assets/apple.png")  # Make sure to create this asset
+	food_sprite.texture = preload("res://assets/apple.png")
 	food_sprite.scale = Vector2(0.5, 0.5)
 	add_child(food_sprite)
 	new_game()
@@ -194,7 +211,7 @@ func _physics_process(delta):
 				var growth_factor = min(1.0, growth_time)
 				var start_pos = body_segments[i-1].position
 				segment.position = start_pos.lerp(target_pos, growth_factor)
-				segment.sprite.scale = Vector2(0.5, 0.5) * growth_factor
+				segment.sprite.scale = Vector2(2.0, 2.0) * growth_factor
 				segment.shadow.scale = segment.sprite.scale
 				
 				if growth_factor >= 1.0:
@@ -226,7 +243,7 @@ func grow():
 	
 	if body_segments.size() > 0:
 		new_segment.position = body_segments[-1].position
-		new_segment.sprite.scale = Vector2(0.05, 0.05)
+		new_segment.sprite.scale = Vector2(2.0, 2.0)
 		new_segment.shadow.scale = new_segment.sprite.scale
 	
 	body_segments.append(new_segment)

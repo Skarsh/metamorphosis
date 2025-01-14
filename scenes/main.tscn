@@ -17,10 +17,8 @@ texture = ExtResource("2_3u8rp")
 
 [node name="Hud" parent="." instance=ExtResource("3_vd0qr")]
 
-[node name="MoveTimer" type="Timer" parent="."]
-wait_time = 0.1
-
 [node name="Food" type="Sprite2D" parent="."]
+visible = false
 texture = ExtResource("5_eckw7")
 offset = Vector2(25, 25)
 
@@ -33,6 +31,7 @@ volume_db = -14.991
 autoplay = true
 
 [node name="Player" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(3, 3)
 
-[connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]
 [connection signal="restart" from="GameOverMenu" to="." method="_on_game_over_menu_restart"]
