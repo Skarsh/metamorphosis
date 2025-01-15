@@ -32,8 +32,8 @@ class SnakeSegment extends Node2D:
         
         # Add spine line
         spine_line = Line2D.new()
-        spine_line.width = 8.0  # Increased width
-        spine_line.default_color = Color(0.4, 0.8, 0.3, 1.0)  # More opaque
+        spine_line.width = 8.0
+        spine_line.default_color = Color(0.4, 0.8, 0.3, 1.0)
         spine_line.z_index = 0  # Same as sprite
         spine_line.begin_cap_mode = Line2D.LINE_CAP_ROUND
         spine_line.end_cap_mode = Line2D.LINE_CAP_ROUND
