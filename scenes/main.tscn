@@ -25,10 +25,6 @@ process_mode = 2
 stream = ExtResource("7_dkne3")
 volume_db = -14.991
 
-[node name="Player" type="Sprite2D" parent="."]
-visible = false
-scale = Vector2(3, 3)
-
 [node name="Background" type="Sprite2D" parent="."]
 position = Vector2(640, 480)
 texture = ExtResource("2_u5y6i")
