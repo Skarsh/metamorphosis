@@ -19,7 +19,6 @@ var game_active: bool = true
 @onready var food = Food.new()
 @onready var audio_player = AudioStreamPlayer.new()
 
-# Define SnakeSegment class first since it's used by Snake
 class SnakeSegment extends Node2D:
     var sprite: Sprite2D
     var shadow: Sprite2D
@@ -35,7 +34,7 @@ class SnakeSegment extends Node2D:
             collision_area = Area2D.new()
             var collision = CollisionShape2D.new()
             var circle_shape = CircleShape2D.new()
-            circle_shape.radius = 15  # Match the original COLLISION_RADIUS
+            circle_shape.radius = COLLISION_RADIUS  
             collision.shape = circle_shape
             collision_area.add_child(collision)
             add_child(collision_area)
@@ -97,7 +96,7 @@ class Food:
         # Add collision shape
         collision = CollisionShape2D.new()
         var circle_shape = CircleShape2D.new()
-        circle_shape.radius = 15  # Match the original COLLISION_RADIUS
+        circle_shape.radius = COLLISION_RADIUS
         collision.shape = circle_shape
         
         sprite.add_child(sprite_node)
@@ -113,13 +112,13 @@ class Food:
             
             valid_position = true
             for segment in snake_segments:
-                if segment.position.distance_to(position) < 30:  # Basic check to avoid spawning directly on snake
+                # Basic check to avoid spawning directly on snake
+                if segment.position.distance_to(position) < 30:
                     valid_position = false
                     break
         
         sprite.position = position
 
-# Define Snake class
 class Snake:
     var segment_positions = []
     var body_segments = []
@@ -139,6 +138,45 @@ class Snake:
         viewport_size = viewport
         _hud = hud
         
+    func initialize(start_pos: Vector2) -> void:
+        # Clear any existing segments
+        for segment in body_segments:
+            segment.queue_free()
+        body_segments.clear()
+        segment_positions.clear()
+        
+        # Reset score
+        score = 0
+        _hud.get_node("ScoreLabel").text = "SCORE: " + str(score)
+        
+        # Create initial segments
+        var head = SnakeSegment.new("head", preload("res://assets/larve/Larve4Head1.png"))
+        var body = SnakeSegment.new("body", preload("res://assets/larve/Larve4Body1.png"))
+        var tail = SnakeSegment.new("tail", preload("res://assets/larve/Larve4Butt1.png"))
+        
+        # Set initial positions with proper spacing
+        head.position = start_pos
+        body.position = start_pos + Vector2.DOWN * SEGMENT_SPACING
+        tail.position = start_pos + Vector2.DOWN * (SEGMENT_SPACING * 2)
+        
+        # Initialize segment_positions with proper spacing
+        segment_positions.push_front(head.position)  # Most recent position first
+        segment_positions.push_front(body.position)
+        segment_positions.push_front(tail.position)
+        
+        # Set proper scales
+        for segment in [head, body, tail]:
+            segment.sprite.scale = Vector2(2.0, 2.0)
+            segment.shadow.scale = segment.sprite.scale
+            _parent_node.add_child(segment)
+            body_segments.append(segment)
+        
+        # Reset direction
+        current_direction = Vector2.UP
+        
+        # Record initial position for segment movement
+        segment_positions.push_front(start_pos)
+    
     func handle_input(delta: float) -> void:
         if Input.is_action_pressed("move_right"):
             current_direction = current_direction.rotated(TURN_RATE * delta)
@@ -214,48 +252,26 @@ class Snake:
     func grow() -> void:
         if is_growing:
             return
+            
+        # Convert current tail to body segment
+        var old_tail = body_segments[-1]
+        old_tail.sprite.texture = preload("res://assets/larve/Larve4Body1.png")
+        old_tail.segment_type = "body"
         
-        var new_segment: SnakeSegment
+        # Create new tail
+        var new_tail = SnakeSegment.new("tail", preload("res://assets/larve/Larve4Butt1.png"))
+        new_tail.position = old_tail.position
+        new_tail.sprite.scale = Vector2(2.0, 2.0)
+        new_tail.shadow.scale = new_tail.sprite.scale
         
-        if body_segments.size() == 0:
-            new_segment = SnakeSegment.new("head", preload("res://assets/larve/Larve4Head1.png"))
-        elif body_segments.size() == 1:
-            new_segment = SnakeSegment.new("body", preload("res://assets/larve/Larve4Body1.png"))
-        else:
-            if body_segments[-1].segment_type == "tail": 
-                body_segments[-1].sprite.texture = preload("res://assets/larve/Larve4Body1.png")
-                body_segments[-1].segment_type = "body"
-            new_segment = SnakeSegment.new("tail", preload("res://assets/larve/Larve4Butt1.png"))
-        
-        if body_segments.size() > 0:
-            new_segment.position = body_segments[-1].position
-            new_segment.sprite.scale = Vector2(2.0, 2.0)
-            new_segment.shadow.scale = new_segment.sprite.scale
-        
-        body_segments.append(new_segment)
-        _parent_node.add_child(new_segment)
+        body_segments.append(new_tail)
+        _parent_node.add_child(new_tail)
         
         is_growing = true
         growth_time = 0.0
     
     func reset(start_pos: Vector2) -> void:
-        score = 0
-        _hud.get_node("ScoreLabel").text = "SCORE: " + str(score)
-        
-        for segment in body_segments:
-            segment.queue_free()
-        body_segments.clear()
-        segment_positions.clear()
-        
-        var head = SnakeSegment.new("head", preload("res://assets/larve/Larve4Head1.png"))
-        _parent_node.add_child(head)
-        body_segments.append(head)
-        
-        head.position = start_pos
-        current_direction = Vector2.UP
-        
-        grow()
-        grow()
+        initialize(start_pos)
 
 func _ready() -> void:
     viewport_size = get_viewport_rect().size
