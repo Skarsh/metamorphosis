@@ -193,26 +193,24 @@ class Snake:
         if Input.is_action_pressed("move_left"):
             current_direction = current_direction.rotated(-TURN_RATE * delta)
         
-        speed_multiplier = BOOST_MULTIPLIER if Input.is_action_pressed("left_shift") else NORMAL_MULTIPLIER
+        speed_multiplier = BOOST_MULTIPLIER if Input.is_action_pressed("move_forward") else NORMAL_MULTIPLIER
     
     func update_position(delta: float) -> void:
         var head = body_segments[0]
         if !head:
             return
             
-        if Input.is_action_pressed("move_forward"):
-            head.position += current_direction * (BASE_SPEED * speed_multiplier) * delta
+        head.position += current_direction * (BASE_SPEED * speed_multiplier) * delta
             
         head.update_rotation(head.position + current_direction, head.position)
         
-        if Input.is_action_pressed("move_forward"):
-            time_since_record += delta
-            if time_since_record >= RECORD_INTERVAL:
-                segment_positions.push_front(head.position)
-                time_since_record = 0
-                
-                if segment_positions.size() > MAX_POSITIONS:
-                    segment_positions.resize(MAX_POSITIONS)
+        time_since_record += delta
+        if time_since_record >= RECORD_INTERVAL:
+            segment_positions.push_front(head.position)
+            time_since_record = 0
+            
+            if segment_positions.size() > MAX_POSITIONS:
+                segment_positions.resize(MAX_POSITIONS)
     
     func check_collision() -> bool:
         var head = body_segments[0]

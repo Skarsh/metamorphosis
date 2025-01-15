@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://dy0pj4q08s45c"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_tdowd"]
-[ext_resource type="Texture2D" uid="uid://cqtb7hm6bmdcp" path="res://assets/Background9.png" id="2_u5y6i"]
 [ext_resource type="PackedScene" uid="uid://b5pn6k28bg2tn" path="res://scenes/hud.tscn" id="3_vd0qr"]
+[ext_resource type="Texture2D" uid="uid://b5m7esph3c70h" path="res://assets/BackgroundV2.png" id="5_d3pgl"]
 [ext_resource type="PackedScene" uid="uid://dufc8nw5g4sb6" path="res://scenes/game_over_menu.tscn" id="6_8r1mt"]
 [ext_resource type="AudioStream" uid="uid://s3meo2kr4cdg" path="res://assets/LarvaMusic2.wav" id="7_dkne3"]
 
@@ -27,6 +27,6 @@ volume_db = -14.991
 
 [node name="Background" type="Sprite2D" parent="."]
 position = Vector2(640, 480)
-texture = ExtResource("2_u5y6i")
+texture = ExtResource("5_d3pgl")
 
 [connection signal="restart" from="GameOverMenu" to="." method="_on_game_over_menu_restart"]
