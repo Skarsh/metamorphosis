@@ -25,9 +25,19 @@ class SnakeSegment extends Node2D:
     var segment_type: String
     var target_rotation = 0.0
     var collision_area: Area2D
+    var spine_line: Line2D  # New line for spine
     
     func _init(type: String, sprite_texture: Texture2D):
         segment_type = type
+        
+        # Add spine line
+        spine_line = Line2D.new()
+        spine_line.width = 8.0  # Increased width
+        spine_line.default_color = Color(0.4, 0.8, 0.3, 1.0)  # More opaque
+        spine_line.z_index = 0  # Same as sprite
+        spine_line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+        spine_line.end_cap_mode = Line2D.LINE_CAP_ROUND
+        add_child(spine_line)
         
         # Add collision area for head only
         if type == "head":
@@ -219,6 +229,24 @@ class Snake:
                 
         return false
     
+    func update_spine_lines() -> void:
+        for i in range(body_segments.size() - 1):
+            var current_segment = body_segments[i]
+            var next_segment = body_segments[i + 1]
+            
+            # Calculate positions in global space
+            var start_pos = current_segment.global_position
+            var end_pos = next_segment.global_position
+            
+            # Convert to local space for the line
+            var local_start = current_segment.to_local(start_pos)
+            var local_end = current_segment.to_local(end_pos)
+            
+            # Update the spine line
+            current_segment.spine_line.clear_points()
+            current_segment.spine_line.add_point(local_start)
+            current_segment.spine_line.add_point(local_end)
+    
     func update_segments(delta: float) -> void:
         for i in range(1, body_segments.size()):
             var segment = body_segments[i]
@@ -234,6 +262,9 @@ class Snake:
                     
                 if target_idx + 1 < segment_positions.size():
                     segment.update_rotation(segment_positions[target_idx + 1], target_pos)
+        
+        # Update spine lines after moving segments
+        update_spine_lines()
     
     func update_growing_segment(segment: SnakeSegment, index: int, target_pos: Vector2, delta: float) -> void:
         growth_time += delta * 3
