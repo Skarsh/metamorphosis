@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bfthcnmb3rn05"
-path="res://.godot/imported/Larve4Butt1.png-06c7a05cdd96d71718aea29fe0b526c2.ctex"
+uid="uid://chjha8uv1ixxs"
+path="res://.godot/imported/LarveBody2.png-c2e36ef12df89fa06edb6b978e81c5ec.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/larve/Larve4Butt1.png"
-dest_files=["res://.godot/imported/Larve4Butt1.png-06c7a05cdd96d71718aea29fe0b526c2.ctex"]
+source_file="res://assets/larve/LarveBody2.png"
+dest_files=["res://.godot/imported/LarveBody2.png-c2e36ef12df89fa06edb6b978e81c5ec.ctex"]
 
 [params]
 
