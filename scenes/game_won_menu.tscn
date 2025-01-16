@@ -1,0 +1,70 @@
+[gd_scene load_steps=6 format=3 uid="uid://lmf7w5airsyd"]
+
+[ext_resource type="Script" path="res://scenes/game_over_menu.gd" id="1_gviw0"]
+[ext_resource type="FontFile" uid="uid://manisfc06ree" path="res://assets/MaldiniBold.ttf" id="2_0jwft"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_41xqc"]
+bg_color = Color(0.627451, 0.54902, 0.215686, 1)
+shadow_size = 5
+shadow_offset = Vector2(10, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nwds5"]
+bg_color = Color(0.440695, 0.631877, 0.719911, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h5jo1"]
+bg_color = Color(0.675381, 0.419324, 0.0908294, 1)
+
+[node name="GameWonMenu" type="CanvasLayer"]
+script = ExtResource("1_gviw0")
+
+[node name="GameOverPanel" type="Panel" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -125.0
+offset_right = 200.0
+offset_bottom = 125.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_41xqc")
+
+[node name="ResultLabel" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -133.0
+offset_top = -87.0
+offset_right = 134.0
+offset_bottom = -17.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_0jwft")
+theme_override_font_sizes/font_size = 50
+text = "GAME WON!!!"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -125.0
+offset_top = 20.0
+offset_right = 125.0
+offset_bottom = 83.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_0jwft")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/hover = SubResource("StyleBoxFlat_nwds5")
+theme_override_styles/normal = SubResource("StyleBoxFlat_h5jo1")
+text = "Play Again
+"
+
+[connection signal="pressed" from="RestartButton" to="." method="_on_restart_button_pressed"]

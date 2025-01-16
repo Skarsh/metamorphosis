@@ -1,13 +1,19 @@
-[gd_scene load_steps=11 format=3 uid="uid://dy0pj4q08s45c"]
+[gd_scene load_steps=18 format=3 uid="uid://dy0pj4q08s45c"]
 
 [ext_resource type="PackedScene" uid="uid://b5pn6k28bg2tn" path="res://scenes/hud.tscn" id="3_vd0qr"]
 [ext_resource type="Texture2D" uid="uid://b5m7esph3c70h" path="res://assets/BackgroundV2.png" id="5_d3pgl"]
-[ext_resource type="Texture2D" uid="uid://d2mkhxascfl10" path="res://assets/larve/LarveHead1.png" id="6_8jkf7"]
 [ext_resource type="PackedScene" uid="uid://dufc8nw5g4sb6" path="res://scenes/game_over_menu.tscn" id="6_8r1mt"]
-[ext_resource type="AudioStream" uid="uid://s3meo2kr4cdg" path="res://assets/LarvaMusic2.wav" id="7_dkne3"]
-[ext_resource type="Texture2D" uid="uid://rooqjur8qraj" path="res://assets/larve/LarveHead2.png" id="7_oqbd8"]
+[ext_resource type="Texture2D" uid="uid://b8dk05uqkv4me" path="res://assets/larve/LarveNyUpScaled1.png" id="7_ixskq"]
 [ext_resource type="Script" path="res://assets/scripts/larve.gd" id="7_u17gr"]
+[ext_resource type="Texture2D" uid="uid://belam2qoyw163" path="res://assets/larve/LarveNyUpScaled2.png" id="8_fm7sc"]
 [ext_resource type="Script" path="res://assets/scripts/game.gd" id="8_nf6wa"]
+[ext_resource type="Texture2D" uid="uid://8ttgwstpu7u0" path="res://assets/larve/LarveNyUpScaled3.png" id="9_5n3yk"]
+[ext_resource type="PackedScene" uid="uid://lmf7w5airsyd" path="res://scenes/game_won_menu.tscn" id="9_nly0f"]
+[ext_resource type="Texture2D" uid="uid://c2q4uvraukgme" path="res://assets/larve/Butterfly1.png" id="10_dg1sx"]
+[ext_resource type="Texture2D" uid="uid://bhetcn7o7ujst" path="res://assets/larve/Butterfly2.png" id="11_1n845"]
+[ext_resource type="Texture2D" uid="uid://c4rsnn4wvqv7i" path="res://assets/larve/Butterfly3.png" id="12_og18t"]
+[ext_resource type="Texture2D" uid="uid://m26hikqks4jo" path="res://assets/larve/Butterfly4.png" id="13_7jnda"]
+[ext_resource type="Texture2D" uid="uid://djuyyclpk0dqy" path="res://assets/larve/Butterfly5.png" id="14_cq5mj"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1iqrc"]
 
@@ -15,14 +21,40 @@
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("6_8jkf7")
+"texture": ExtResource("7_ixskq")
 }, {
 "duration": 1.0,
-"texture": ExtResource("7_oqbd8")
+"texture": ExtResource("8_fm7sc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_5n3yk")
 }],
 "loop": true,
 "name": &"move",
-"speed": 2.0
+"speed": 4.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3oogh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("10_dg1sx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_1n845")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_og18t")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_7jnda")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_cq5mj")
+}],
+"loop": true,
+"name": &"move",
+"speed": 10.0
 }]
 
 [node name="Main" type="Node2D"]
@@ -34,10 +66,6 @@ visible = false
 texture = SubResource("CompressedTexture2D_1iqrc")
 offset = Vector2(25, 25)
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("7_dkne3")
-volume_db = -14.991
-
 [node name="Background" type="Sprite2D" parent="."]
 position = Vector2(640, 480)
 texture = ExtResource("5_d3pgl")
@@ -48,15 +76,29 @@ script = ExtResource("8_nf6wa")
 [node name="GameOverMenu" parent="Game" instance=ExtResource("6_8r1mt")]
 process_mode = 2
 
-[node name="Larve" type="Node2D" parent="Game" node_paths=PackedStringArray("animated_sprite")]
+[node name="Larve" type="Node2D" parent="Game" node_paths=PackedStringArray("larve_animated_sprite", "butterfly_animated_sprite")]
 position = Vector2(350, 507)
 script = ExtResource("7_u17gr")
-animated_sprite = NodePath("AnimatedSprite2D")
+larve_animated_sprite = NodePath("LarveAnimatedSprite2D")
+butterfly_animated_sprite = NodePath("ButterflyAnimatedSprite2D")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Game/Larve"]
+[node name="LarveAnimatedSprite2D" type="AnimatedSprite2D" parent="Game/Larve"]
 scale = Vector2(1, 1.076)
 sprite_frames = SubResource("SpriteFrames_i6evl")
 animation = &"move"
-frame_progress = 0.205634
+frame_progress = 0.0711488
+
+[node name="ButterflyAnimatedSprite2D" type="AnimatedSprite2D" parent="Game/Larve"]
+visible = false
+position = Vector2(-1, 0)
+sprite_frames = SubResource("SpriteFrames_3oogh")
+animation = &"move"
+frame_progress = 0.390085
+
+[node name="GameWonMenu" parent="Game" instance=ExtResource("9_nly0f")]
+visible = false
+
+[node name="AudioStreamManager" type="Node" parent="."]
 
 [connection signal="restart" from="Game/GameOverMenu" to="." method="_on_game_over_menu_restart"]
+[connection signal="restart" from="Game/GameWonMenu" to="Game" method="_on_game_won_menu_restart"]

@@ -1,14 +1,22 @@
 extends Node
 
+var audio_manager: AudioManager
+
 var game_started: bool = false
 var game_active: bool = true
 
 var time_since_last_spawn: float = 0.0
-var spawn_interval: float = 2.0
+var spawn_interval: float = 1.0
+
+var swapped = false
 
 enum FoodType {SMALL, MEDIUM, LARGE}
 
 func _ready() -> void:
+
+	audio_manager = AudioManager.new()
+	add_child(audio_manager)
+	audio_manager.play()
 	new_game()
 
 func _process(delta: float) -> void:
@@ -17,6 +25,20 @@ func _process(delta: float) -> void:
 	if time_since_last_spawn >= spawn_interval:
 		spawn_random_food()
 		time_since_last_spawn = 0.0
+
+	if $Larve.health <= 0:
+		end_game()
+	
+	if $Larve.health >= 110:
+		$Larve.animated_sprite = $Larve.butterfly_animated_sprite
+		$Larve.larve_animated_sprite.hide()
+		$Larve.butterfly_animated_sprite.show()
+		$Larve.current_mode = $Larve.Mode.BUTTERFLY
+		if !swapped:
+			audio_manager.stop()
+			audio_manager.swap()
+			audio_manager.play()
+			swapped = true
 
 func spawn_random_food():
 	var food = Food.new()
@@ -41,6 +63,9 @@ func spawn_random_food():
 
 	add_child(food)
 
+func on_food_eaten() -> void:
+	audio_manager.play_eat()
+
 func new_game() -> void:
 	get_tree().paused = false
 	$GameOverMenu.hide()
@@ -50,7 +75,6 @@ func new_game() -> void:
 	for i in range(5):
 		spawn_random_food()
 	
-
 func start_game() -> void:
 	game_started = true
 	game_active = true
@@ -61,5 +85,14 @@ func end_game() -> void:
 	$GameOverMenu.show()
 	get_tree().paused = true
 
+func won_game() -> void:
+	game_active = false
+	game_started = false
+	$GameWonMenu.show()
+	get_tree().paused = true
+
 func _on_game_over_menu_restart() -> void:
+	new_game()
+
+func _on_game_won_menu_restart() -> void:
 	new_game()
