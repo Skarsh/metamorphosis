@@ -9,11 +9,8 @@ var game_active: bool = true
 var time_since_last_spawn: float = 0.0
 var spawn_interval: float = 1.0
 
-var morphed = false
 var time_since_last_morph: float = 0.0
 var morph_duration: float = 10.0
-
-enum FoodType {SMALL, MEDIUM, LARGE}
 
 func _ready() -> void:
 
@@ -26,14 +23,13 @@ func _process(delta: float) -> void:
 	time_since_last_spawn += delta
 	time_since_last_morph += delta
 
-	if time_since_last_morph >= morph_duration and morphed == true: 
-		morphed = false
+	if time_since_last_morph >= morph_duration and player.current_mode == Player.Mode.BUTTERFLY: 
+		player.current_mode = player.Mode.LARVE
 		player.health = 100
 		audio_manager.swap_music()
 		player.animated_sprite = player.larve_animated_sprite
 		player.butterfly_animated_sprite.hide()
 		player.larve_animated_sprite.show()
-		player.current_mode = player.Mode.LARVE
 		player.movement_speed = player.BASE_MOVEMENT_SPEED
 
 	if time_since_last_spawn >= spawn_interval:
@@ -43,30 +39,28 @@ func _process(delta: float) -> void:
 	if player.health <= 0:
 		end_game()
 	
-	if player.health >= 110:
+	if player.health >= 110 and player.current_mode == Player.Mode.LARVE:
 		player.animated_sprite = player.butterfly_animated_sprite
 		player.larve_animated_sprite.hide()
 		player.butterfly_animated_sprite.show()
 		player.current_mode = player.Mode.BUTTERFLY
 		player.movement_speed = player.BASE_MOVEMENT_SPEED * 2
-		if !morphed:
-			audio_manager.swap_music()
-			morphed = true
-			time_since_last_morph = 0.0
+		audio_manager.swap_music()
+		time_since_last_morph = 0.0
 	
 
 func spawn_random_food():
 	var food = Food.new()
 
-	var food_type = randi() % FoodType.size()
+	var food_type = randi() % Food.FoodType.size()
 	match food_type:
-		FoodType.SMALL:
+		Food.FoodType.SMALL:
 			food.nutrition_value = 5
 			food.scale = Vector2(0.5, 0.5)
-		FoodType.MEDIUM:
+		Food.FoodType.MEDIUM:
 			food.nutrition_value = 10
 			food.scale = Vector2(0.75, 0.75)
-		FoodType.LARGE:
+		Food.FoodType.LARGE:
 			food.nutrition_value = 15
 			food.scale = Vector2(1.0, 1.0)
 	
