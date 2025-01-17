@@ -27,6 +27,8 @@ func _init():
 
 func play(player: String) -> bool:
 	if player_dict.has(player):
+		if player == "larve" or player == "butterfly":
+			current_player_music_key = player
 		player_dict[player].play()
 		return true
 	return false
