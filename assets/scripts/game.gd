@@ -1,7 +1,8 @@
 extends Node
 
-var audio_manager: AudioManager
+@export var player: Player
 
+var audio_manager: AudioManager
 var game_started: bool = false
 var game_active: bool = true
 
@@ -27,27 +28,27 @@ func _process(delta: float) -> void:
 
 	if time_since_last_morph >= morph_duration and morphed == true: 
 		morphed = false
-		$Larve.health = 100
+		player.health = 100
 		audio_manager.swap_music()
-		$Larve.animated_sprite = $Larve.larve_animated_sprite
-		$Larve.butterfly_animated_sprite.hide()
-		$Larve.larve_animated_sprite.show()
-		$Larve.current_mode = $Larve.Mode.LARVE
-		$Larve.movement_speed = $Larve.BASE_MOVEMENT_SPEED
+		player.animated_sprite = player.larve_animated_sprite
+		player.butterfly_animated_sprite.hide()
+		player.larve_animated_sprite.show()
+		player.current_mode = player.Mode.LARVE
+		player.movement_speed = player.BASE_MOVEMENT_SPEED
 
 	if time_since_last_spawn >= spawn_interval:
 		spawn_random_food()
 		time_since_last_spawn = 0.0
 
-	if $Larve.health <= 0:
+	if player.health <= 0:
 		end_game()
 	
-	if $Larve.health >= 110:
-		$Larve.animated_sprite = $Larve.butterfly_animated_sprite
-		$Larve.larve_animated_sprite.hide()
-		$Larve.butterfly_animated_sprite.show()
-		$Larve.current_mode = $Larve.Mode.BUTTERFLY
-		$Larve.movement_speed = $Larve.BASE_MOVEMENT_SPEED * 2
+	if player.health >= 110:
+		player.animated_sprite = player.butterfly_animated_sprite
+		player.larve_animated_sprite.hide()
+		player.butterfly_animated_sprite.show()
+		player.current_mode = player.Mode.BUTTERFLY
+		player.movement_speed = player.BASE_MOVEMENT_SPEED * 2
 		if !morphed:
 			audio_manager.swap_music()
 			morphed = true
