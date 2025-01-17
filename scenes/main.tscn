@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://b5m7esph3c70h" path="res://assets/BackgroundV2.png" id="5_d3pgl"]
 [ext_resource type="PackedScene" uid="uid://dufc8nw5g4sb6" path="res://scenes/game_over_menu.tscn" id="6_8r1mt"]
 [ext_resource type="Texture2D" uid="uid://b8dk05uqkv4me" path="res://assets/larve/LarveNyUpScaled1.png" id="7_ixskq"]
-[ext_resource type="Script" path="res://assets/scripts/larve.gd" id="7_u17gr"]
+[ext_resource type="Script" path="res://assets/scripts/player.gd" id="7_u17gr"]
 [ext_resource type="Texture2D" uid="uid://belam2qoyw163" path="res://assets/larve/LarveNyUpScaled2.png" id="8_fm7sc"]
 [ext_resource type="Script" path="res://assets/scripts/game.gd" id="8_nf6wa"]
 [ext_resource type="Texture2D" uid="uid://8ttgwstpu7u0" path="res://assets/larve/LarveNyUpScaled3.png" id="9_5n3yk"]
@@ -70,25 +70,26 @@ offset = Vector2(25, 25)
 position = Vector2(640, 480)
 texture = ExtResource("5_d3pgl")
 
-[node name="Game" type="Node" parent="."]
+[node name="Game" type="Node" parent="." node_paths=PackedStringArray("player")]
 script = ExtResource("8_nf6wa")
+player = NodePath("Player")
 
 [node name="GameOverMenu" parent="Game" instance=ExtResource("6_8r1mt")]
 process_mode = 2
 
-[node name="Larve" type="Node2D" parent="Game" node_paths=PackedStringArray("larve_animated_sprite", "butterfly_animated_sprite")]
+[node name="Player" type="Node2D" parent="Game" node_paths=PackedStringArray("larve_animated_sprite", "butterfly_animated_sprite")]
 position = Vector2(350, 507)
 script = ExtResource("7_u17gr")
 larve_animated_sprite = NodePath("LarveAnimatedSprite2D")
 butterfly_animated_sprite = NodePath("ButterflyAnimatedSprite2D")
 
-[node name="LarveAnimatedSprite2D" type="AnimatedSprite2D" parent="Game/Larve"]
+[node name="LarveAnimatedSprite2D" type="AnimatedSprite2D" parent="Game/Player"]
 scale = Vector2(1, 1.076)
 sprite_frames = SubResource("SpriteFrames_i6evl")
 animation = &"move"
 frame_progress = 0.0711488
 
-[node name="ButterflyAnimatedSprite2D" type="AnimatedSprite2D" parent="Game/Larve"]
+[node name="ButterflyAnimatedSprite2D" type="AnimatedSprite2D" parent="Game/Player"]
 visible = false
 position = Vector2(-1, 0)
 sprite_frames = SubResource("SpriteFrames_3oogh")
