@@ -1,6 +1,8 @@
 extends Area2D
 class_name Food
 
+enum FoodType {SMALL, MEDIUM, LARGE}
+
 var nutrition_value: int = 10
 var size_xy_pixels: Vector2 = Vector2(16, 16)
 var size_factor: float = 1.0
