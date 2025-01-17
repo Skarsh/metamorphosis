@@ -8,7 +8,9 @@ var game_active: bool = true
 var time_since_last_spawn: float = 0.0
 var spawn_interval: float = 1.0
 
-var swapped = false
+var morphed = false
+var time_since_last_morph: float = 0.0
+var morph_duration: float = 10.0
 
 enum FoodType {SMALL, MEDIUM, LARGE}
 
@@ -16,11 +18,22 @@ func _ready() -> void:
 
 	audio_manager = AudioManager.new()
 	add_child(audio_manager)
-	audio_manager.play()
+	audio_manager.play("larve")
 	new_game()
 
 func _process(delta: float) -> void:
 	time_since_last_spawn += delta
+	time_since_last_morph += delta
+
+	if time_since_last_morph >= morph_duration and morphed == true: 
+		morphed = false
+		$Larve.health = 100
+		audio_manager.swap_music()
+		$Larve.animated_sprite = $Larve.larve_animated_sprite
+		$Larve.butterfly_animated_sprite.hide()
+		$Larve.larve_animated_sprite.show()
+		$Larve.current_mode = $Larve.Mode.LARVE
+		$Larve.movement_speed = $Larve.BASE_MOVEMENT_SPEED
 
 	if time_since_last_spawn >= spawn_interval:
 		spawn_random_food()
@@ -34,11 +47,12 @@ func _process(delta: float) -> void:
 		$Larve.larve_animated_sprite.hide()
 		$Larve.butterfly_animated_sprite.show()
 		$Larve.current_mode = $Larve.Mode.BUTTERFLY
-		if !swapped:
-			audio_manager.stop()
-			audio_manager.swap()
-			audio_manager.play()
-			swapped = true
+		$Larve.movement_speed = $Larve.BASE_MOVEMENT_SPEED * 2
+		if !morphed:
+			audio_manager.swap_music()
+			morphed = true
+			time_since_last_morph = 0.0
+	
 
 func spawn_random_food():
 	var food = Food.new()
@@ -64,7 +78,7 @@ func spawn_random_food():
 	add_child(food)
 
 func on_food_eaten() -> void:
-	audio_manager.play_eat()
+	audio_manager.play("eat")
 
 func new_game() -> void:
 	get_tree().paused = false

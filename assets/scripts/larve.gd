@@ -4,12 +4,14 @@ class_name Larve
 @export var larve_animated_sprite: AnimatedSprite2D
 @export var butterfly_animated_sprite: AnimatedSprite2D
 
+var BASE_MOVEMENT_SPEED: int = 300
+
 var animated_sprite: AnimatedSprite2D
 var size_factor: float = 1.0
 var size_xy_pixels = Vector2(64, 64) * size_factor
 
 var health: int = 100
-var movement_speed: int = 300  # Increased for better feel
+var movement_speed: int = BASE_MOVEMENT_SPEED 
 var rotation_speed: float = 3.0  # Radians per second
 var velocity = Vector2.ZERO
 var current_mode = Mode
