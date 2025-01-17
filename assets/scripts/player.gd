@@ -1,5 +1,5 @@
 extends Node2D
-class_name Larve
+class_name Player
 
 @export var larve_animated_sprite: AnimatedSprite2D
 @export var butterfly_animated_sprite: AnimatedSprite2D
@@ -54,3 +54,4 @@ func eat(nutrition: int) -> void:
 		health += nutrition
 		size_factor *= 1.05
 		self.scale = Vector2(size_factor, size_factor)
+
