@@ -12,7 +12,7 @@ var size_xy_pixels = Vector2(64, 64) * size_factor
 
 var health: int = 100
 var movement_speed: int = BASE_MOVEMENT_SPEED 
-var rotation_speed: float = 3.0  # Radians per second
+var rotation_speed: float = 6.0  # Radians per second
 var velocity = Vector2.ZERO
 var current_mode = Mode
 
@@ -36,6 +36,11 @@ func _ready() -> void:
 	self.scale = Vector2(self.size_factor, self.size_factor)
 
 func _process(delta: float) -> void:
+	if current_mode == Mode.LARVE:
+		movement_speed = BASE_MOVEMENT_SPEED
+	else:
+		movement_speed = 2 * BASE_MOVEMENT_SPEED
+
 	if Input.is_action_pressed("move_right"):
 		rotate(rotation_speed * delta)
 	if Input.is_action_pressed("move_left"):
@@ -43,15 +48,24 @@ func _process(delta: float) -> void:
 	
 	if Input.is_action_pressed("move_forward"):
 		var direction = Vector2.UP.rotated(rotation)
-		position += direction * movement_speed * delta
+		position += direction * movement_speed * 2.0 * delta
 		animated_sprite.play("move")
 	else:
-		# Stop animation when not moving
-		animated_sprite.stop()
+		var direction = Vector2.UP.rotated(rotation)
+		position += direction * movement_speed * delta
+		animated_sprite.play("move")
 
-func eat(nutrition: int) -> void:
+
+func eat() -> void:
 	if current_mode == Mode.LARVE:
-		health += nutrition
-		size_factor *= 1.05
+		size_factor += 0.05
 		self.scale = Vector2(size_factor, size_factor)
+
+func repellant(damage: int) -> void:
+	if current_mode == Mode.LARVE:
+		size_factor *= 0.80
+		self.scale = Vector2(size_factor, size_factor)
+		self.health -= damage
+
+
 

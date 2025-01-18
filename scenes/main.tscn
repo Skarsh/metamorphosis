@@ -1,7 +1,7 @@
-[gd_scene load_steps=18 format=3 uid="uid://dy0pj4q08s45c"]
+[gd_scene load_steps=17 format=3 uid="uid://dy0pj4q08s45c"]
 
+[ext_resource type="Texture2D" uid="uid://bqc53l5xxjujy" path="res://assets/BackgroundNew3.png" id="1_6p85a"]
 [ext_resource type="PackedScene" uid="uid://b5pn6k28bg2tn" path="res://scenes/hud.tscn" id="3_vd0qr"]
-[ext_resource type="Texture2D" uid="uid://b5m7esph3c70h" path="res://assets/BackgroundV2.png" id="5_d3pgl"]
 [ext_resource type="PackedScene" uid="uid://dufc8nw5g4sb6" path="res://scenes/game_over_menu.tscn" id="6_8r1mt"]
 [ext_resource type="Texture2D" uid="uid://b8dk05uqkv4me" path="res://assets/larve/LarveNyUpScaled1.png" id="7_ixskq"]
 [ext_resource type="Script" path="res://assets/scripts/player.gd" id="7_u17gr"]
@@ -14,8 +14,6 @@
 [ext_resource type="Texture2D" uid="uid://c4rsnn4wvqv7i" path="res://assets/larve/Butterfly3.png" id="12_og18t"]
 [ext_resource type="Texture2D" uid="uid://m26hikqks4jo" path="res://assets/larve/Butterfly4.png" id="13_7jnda"]
 [ext_resource type="Texture2D" uid="uid://djuyyclpk0dqy" path="res://assets/larve/Butterfly5.png" id="14_cq5mj"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1iqrc"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_i6evl"]
 animations = [{
@@ -59,19 +57,13 @@ animations = [{
 
 [node name="Main" type="Node2D"]
 
-[node name="Hud" parent="." instance=ExtResource("3_vd0qr")]
-
-[node name="Food" type="Sprite2D" parent="."]
-visible = false
-texture = SubResource("CompressedTexture2D_1iqrc")
-offset = Vector2(25, 25)
-
 [node name="Background" type="Sprite2D" parent="."]
 position = Vector2(640, 480)
-texture = ExtResource("5_d3pgl")
+texture = ExtResource("1_6p85a")
 
-[node name="Game" type="Node" parent="." node_paths=PackedStringArray("player")]
+[node name="Game" type="Node" parent="." node_paths=PackedStringArray("hud", "player")]
 script = ExtResource("8_nf6wa")
+hud = NodePath("Hud")
 player = NodePath("Player")
 
 [node name="GameOverMenu" parent="Game" instance=ExtResource("6_8r1mt")]
@@ -98,6 +90,8 @@ frame_progress = 0.390085
 
 [node name="GameWonMenu" parent="Game" instance=ExtResource("9_nly0f")]
 visible = false
+
+[node name="Hud" parent="Game" instance=ExtResource("3_vd0qr")]
 
 [node name="AudioStreamManager" type="Node" parent="."]
 

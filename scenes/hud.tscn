@@ -1,16 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://b5pn6k28bg2tn"]
+[gd_scene load_steps=2 format=3 uid="uid://b5pn6k28bg2tn"]
 
 [ext_resource type="FontFile" uid="uid://manisfc06ree" path="res://assets/MaldiniBold.ttf" id="1_d78j3"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dpnv6"]
-bg_color = Color(0.381869, 0.63013, 0.804167, 1)
-
 [node name="Hud" type="CanvasLayer"]
-
-[node name="ScorePanel" type="Panel" parent="."]
-offset_right = 1280.0
-offset_bottom = 50.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_dpnv6")
 
 [node name="ScoreLabel" type="Label" parent="."]
 anchors_preset = 5
@@ -25,3 +17,17 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("1_d78j3")
 theme_override_font_sizes/font_size = 40
 text = "SCORE: 0"
+
+[node name="HealthLabel" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 480.23
+offset_right = 614.23
+offset_bottom = 58.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.845141, 0.389969, 0.289584, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_d78j3")
+theme_override_font_sizes/font_size = 40
+text = "Health: 0"
