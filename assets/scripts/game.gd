@@ -21,6 +21,10 @@ var time_since_last_morph: float = 0.0
 var morph_duration: float = 10.0
 const MORPH_SIZE_CRITERIA = 1.5
 
+var time_since_last_outside_bounds_damage: float = 0.0
+const OUTSIDE_BOUNDS_TIME_CRITERIA = 1.0
+const OUTSIDE_BOUNDS_DAMAGE = 10
+
 func _ready() -> void:
 
 	repellants.resize(max_repellants)
@@ -41,6 +45,8 @@ func _process(delta: float) -> void:
 	time_since_last_repellant_spawn += delta
 
 	time_since_last_morph += delta
+	
+	time_since_last_outside_bounds_damage += delta
 
 	if time_since_last_food_spawn >= food_spawn_interval:
 		spawn_random_food()
@@ -60,7 +66,16 @@ func _process(delta: float) -> void:
 		time_since_last_morph = 0.0
 		player.size_factor = 1.0
 	
-		
+	if get_viewport():
+		var viewport_rect = get_viewport().get_visible_rect()
+		var outside_horizontal = player.position.x > viewport_rect.size.x || player.position.x < 0
+		var outside_vertical = player.position.y > viewport_rect.size.y || player.position.y < 0
+		if outside_horizontal || outside_vertical:
+			if time_since_last_outside_bounds_damage >= OUTSIDE_BOUNDS_TIME_CRITERIA:
+				time_since_last_outside_bounds_damage = 0.0
+				player.health -= OUTSIDE_BOUNDS_DAMAGE
+				audio_manager.play("crash")
+
 
 func spawn_random_food():
 	var food = Food.new()
