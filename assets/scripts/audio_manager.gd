@@ -6,9 +6,10 @@ var player_dict = {}
 var current_player_music_key: String
 
 func _init():
-	var larve_music = preload("res://assets/LarvaMusic2.wav")
-	var butterfly_music = preload("res://assets/Metamorphis_2.wav")
-	var eat_sound = preload("res://assets/LarvaEatFX.wav")
+	var larve_music = preload("res://assets/sounds/LarvaMusic3.ogg")
+	var butterfly_music = preload("res://assets/sounds/Metamorphis_3.ogg")
+	var eat_sound = preload("res://assets/sounds/LarvaEatFX.wav")
+	var crash_sound = preload("res://assets/sounds/LarvaCrashFX.wav")
 
 	var larve_player = AudioStreamPlayer2D.new()
 	larve_player.stream = larve_music
@@ -19,8 +20,11 @@ func _init():
 	var eat_player = AudioStreamPlayer2D.new()
 	eat_player.stream = eat_sound
 
+	var crash_player = AudioStreamPlayer2D.new()
+	crash_player.stream = crash_sound
+
 	current_player_music_key = "larve"
-	player_dict = {"larve": larve_player, "butterfly": butterfly_player, "eat": eat_player}
+	player_dict = {"larve": larve_player, "butterfly": butterfly_player, "eat": eat_player, "crash": crash_player}
 
 	for player in player_dict.values():
 		add_child(player)

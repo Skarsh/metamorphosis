@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bm2gfqbso6wg2"
-path="res://.godot/imported/LarvaEatFX.wav-71d908b2a2762c156b436d41407d5eca.sample"
+path="res://.godot/imported/LarvaEatFX.wav-f2447afc89965073cc43e7ae4a493eed.sample"
 
 [deps]
 
-source_file="res://assets/LarvaEatFX.wav"
-dest_files=["res://.godot/imported/LarvaEatFX.wav-71d908b2a2762c156b436d41407d5eca.sample"]
+source_file="res://assets/sounds/LarvaEatFX.wav"
+dest_files=["res://.godot/imported/LarvaEatFX.wav-f2447afc89965073cc43e7ae4a493eed.sample"]
 
 [params]
 

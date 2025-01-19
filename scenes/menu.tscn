@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://do2lgegs880ss"]
+[gd_scene load_steps=8 format=3 uid="uid://do2lgegs880ss"]
 
 [ext_resource type="Script" path="res://scenes/menu.gd" id="1_khvye"]
 [ext_resource type="Texture2D" uid="uid://bqc53l5xxjujy" path="res://assets/BackgroundNew3.png" id="2_khs50"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cvxoy3qvqpci7" path="res://assets/EXIT.png" id="4_e4upa"]
 [ext_resource type="AudioStream" uid="uid://d1ov6isg8aifr" path="res://assets/sounds/MenuClickBop.wav" id="5_4pc60"]
 [ext_resource type="AudioStream" uid="uid://ct1eih2o8fvkt" path="res://assets/sounds/MenuHoverBop.wav" id="5_s3w0u"]
+[ext_resource type="AudioStream" uid="uid://bs46am8358ky0" path="res://assets/sounds/LarvaMusicMainMenu2.ogg" id="7_c42ww"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -58,6 +59,10 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(3, 3)
 texture_normal = ExtResource("4_e4upa")
+
+[node name="MenuMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_c42ww")
+autoplay = true
 
 [connection signal="mouse_entered" from="PlayButtonTexture" to="." method="_on_play_button_texture_mouse_entered"]
 [connection signal="pressed" from="PlayButtonTexture" to="." method="_on_play_button_texture_pressed"]

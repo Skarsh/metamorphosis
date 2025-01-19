@@ -110,7 +110,7 @@ func on_food_eaten(nutrition_value: int) -> void:
 
 func on_repellant() -> void:
 	hud.get_node("HealthLabel").text = "HEALTH: " + str(player.health)
-	audio_manager.play("eat")
+	audio_manager.play("crash")
 
 func new_game() -> void:
 	get_tree().paused = false
