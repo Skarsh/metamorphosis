@@ -4,7 +4,7 @@ class_name Player
 @export var larve_animated_sprite: AnimatedSprite2D
 @export var butterfly_animated_sprite: AnimatedSprite2D
 
-var BASE_MOVEMENT_SPEED: int = 300
+const BASE_MOVEMENT_SPEED: int = 300
 
 var animated_sprite: AnimatedSprite2D
 var size_factor: float = 1.0
@@ -65,6 +65,8 @@ func repellant(damage: int) -> void:
 	if current_mode == Mode.LARVE:
 		size_factor *= 0.80
 		self.scale = Vector2(size_factor, size_factor)
+		self.health -= damage
+	else: 
 		self.health -= damage
 
 

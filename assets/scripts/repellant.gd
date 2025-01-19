@@ -20,8 +20,9 @@ func _ready() -> void:
 
 func _on_area_entered(area: Area2D) -> void:
 	if area.get_parent() is Player:
+		print("colliding with repellant")
 		var game = get_parent()
-		if game.has_method("on_food_eaten"):
+		if game.has_method("on_repellant"):
 			game.on_repellant()
 		var larve = area.get_parent()
 		larve.repellant(damage)

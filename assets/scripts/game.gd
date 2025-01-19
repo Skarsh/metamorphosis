@@ -19,6 +19,7 @@ var repellant_spawn_interval: float = 3.0
 
 var time_since_last_morph: float = 0.0
 var morph_duration: float = 10.0
+const MORPH_SIZE_CRITERIA = 1.5
 
 func _ready() -> void:
 
@@ -30,6 +31,8 @@ func _ready() -> void:
 	new_game()
 
 func _process(delta: float) -> void:
+	hud.get_node("ScoreLabel").text = "SCORE: " + str(game_score)
+	hud.get_node("HealthLabel").text = "HEALTH: " + str(player.health)
 
 	if player.health <= 0:
 		end_game()
@@ -48,7 +51,7 @@ func _process(delta: float) -> void:
 		time_since_last_repellant_spawn = 0.0
 	
 	# Morph to butterfly
-	if player.size_factor >= 3.5 and player.current_mode == Player.Mode.LARVE:
+	if player.size_factor >= MORPH_SIZE_CRITERIA and player.current_mode == Player.Mode.LARVE:
 		player.animated_sprite = player.butterfly_animated_sprite
 		player.larve_animated_sprite.hide()
 		player.butterfly_animated_sprite.show()
@@ -57,7 +60,6 @@ func _process(delta: float) -> void:
 		time_since_last_morph = 0.0
 		player.size_factor = 1.0
 	
-	print("player.size_factor: ", player.size_factor)
 		
 
 func spawn_random_food():
@@ -104,12 +106,9 @@ func spawn_random_repellant():
 
 func on_food_eaten(nutrition_value: int) -> void:
 	game_score += nutrition_value
-	hud.get_node("ScoreLabel").text = "SCORE: " + str(game_score)
-	hud.get_node("HealthLabel").text = "HEALTH: " + str(player.health)
 	audio_manager.play("eat")
 
 func on_repellant() -> void:
-	hud.get_node("HealthLabel").text = "HEALTH: " + str(player.health)
 	audio_manager.play("crash")
 
 func new_game() -> void:
