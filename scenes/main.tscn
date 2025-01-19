@@ -2,12 +2,12 @@
 
 [ext_resource type="Texture2D" uid="uid://bqc53l5xxjujy" path="res://assets/images/BackgroundNew3.png" id="1_6p85a"]
 [ext_resource type="PackedScene" uid="uid://b5pn6k28bg2tn" path="res://scenes/hud.tscn" id="3_vd0qr"]
+[ext_resource type="Texture2D" uid="uid://detatc3vuyuy4" path="res://assets/insect_repellant/Larve3_brown.png" id="5_7ht45"]
+[ext_resource type="Texture2D" uid="uid://dbf7fe7fpvq0m" path="res://assets/larve/brown/Larve4_brown.png" id="6_1duex"]
 [ext_resource type="PackedScene" uid="uid://dufc8nw5g4sb6" path="res://scenes/game_over_menu.tscn" id="6_8r1mt"]
-[ext_resource type="Texture2D" uid="uid://b8dk05uqkv4me" path="res://assets/larve/LarveNyUpScaled1.png" id="7_ixskq"]
+[ext_resource type="Texture2D" uid="uid://dmob0boljswmf" path="res://assets/larve/brown/Larve5_brown.png" id="7_nis7x"]
 [ext_resource type="Script" path="res://assets/scripts/player.gd" id="7_u17gr"]
-[ext_resource type="Texture2D" uid="uid://belam2qoyw163" path="res://assets/larve/LarveNyUpScaled2.png" id="8_fm7sc"]
 [ext_resource type="Script" path="res://assets/scripts/game.gd" id="8_nf6wa"]
-[ext_resource type="Texture2D" uid="uid://8ttgwstpu7u0" path="res://assets/larve/LarveNyUpScaled3.png" id="9_5n3yk"]
 [ext_resource type="PackedScene" uid="uid://lmf7w5airsyd" path="res://scenes/game_won_menu.tscn" id="9_nly0f"]
 [ext_resource type="Texture2D" uid="uid://c2q4uvraukgme" path="res://assets/larve/Butterfly1.png" id="10_dg1sx"]
 [ext_resource type="Texture2D" uid="uid://bhetcn7o7ujst" path="res://assets/larve/Butterfly2.png" id="11_1n845"]
@@ -19,17 +19,17 @@
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("7_ixskq")
+"texture": ExtResource("5_7ht45")
 }, {
 "duration": 1.0,
-"texture": ExtResource("8_fm7sc")
+"texture": ExtResource("6_1duex")
 }, {
 "duration": 1.0,
-"texture": ExtResource("9_5n3yk")
+"texture": ExtResource("7_nis7x")
 }],
 "loop": true,
 "name": &"move",
-"speed": 4.0
+"speed": 5.0
 }]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_3oogh"]
@@ -79,7 +79,7 @@ butterfly_animated_sprite = NodePath("ButterflyAnimatedSprite2D")
 scale = Vector2(1, 1.076)
 sprite_frames = SubResource("SpriteFrames_i6evl")
 animation = &"move"
-frame_progress = 0.0711488
+frame_progress = 0.758997
 
 [node name="ButterflyAnimatedSprite2D" type="AnimatedSprite2D" parent="Game/Player"]
 visible = false

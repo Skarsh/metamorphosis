@@ -3,6 +3,7 @@ extends Node
 @export var hud: Node
 @export var player: Player
 
+static var hiscore: int = 0
 
 const viewport_width = 1280
 const viewport_height = 960
@@ -23,7 +24,7 @@ var repellant_spawn_interval: float = 3.0
 
 var time_since_last_morph: float = 0.0
 var morph_duration: float = 10.0
-const MORPH_SIZE_CRITERIA = 2.0
+const MORPH_SIZE_CRITERIA = 4.0
 
 var time_since_last_outside_bounds_damage: float = 0.0
 const OUTSIDE_BOUNDS_TIME_CRITERIA = 1.0
@@ -31,7 +32,7 @@ const OUTSIDE_BOUNDS_DAMAGE = 10
 
 var time_since_last_movement_increase: float = 0
 const MOVEMENT_SPEED_INCREMENT_TIME_CRITERIA = 1
-const MOVEMENT_INCREASE_INCREMENT: int = 10
+const MOVEMENT_INCREASE_INCREMENT: int = 5
 
 const BUTTERFLY_POINT_MODIFIER = 2
 
@@ -46,6 +47,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	hud.get_node("ScoreLabel").text = "SCORE: " + str(game_score)
+	hud.get_node("HiScoreLabel").text = "HiScore: " + str(hiscore)
 	hud.get_node("HealthLabel").text = "HEALTH: " + str(player.health)
 
 	if player.health <= 0:
@@ -79,8 +81,12 @@ func _process(delta: float) -> void:
 		player.current_mode = player.Mode.BUTTERFLY
 		audio_manager.swap_music()
 		time_since_last_morph = 0.0
-		player.size_factor = 1.0
+		player.scale = Vector2(2.0, 2.0)
 		player.health = player.BASE_HEALTH * 2
+
+		player.butterfly_rect_shape = RectangleShape2D.new()
+		player.butterfly_rect_shape.size = player.butterfly_size_xy_pixel
+		player.collision_shape.shape = player.butterfly_rect_shape
 	
 	if get_viewport():
 		var viewport_rect = get_viewport().get_visible_rect()
@@ -163,6 +169,8 @@ func start_game() -> void:
 	game_active = true
 
 func end_game() -> void:
+	if game_score > hiscore:
+		hiscore = game_score
 	game_active = false
 	game_started = false
 	$GameOverMenu.show()

@@ -16,7 +16,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("1_d78j3")
 theme_override_font_sizes/font_size = 40
-text = "SCORE: 0"
+text = "Score 0"
 
 [node name="HealthLabel" type="Label" parent="."]
 anchors_preset = 5
@@ -30,4 +30,18 @@ theme_override_colors/font_color = Color(0.845141, 0.389969, 0.289584, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("1_d78j3")
 theme_override_font_sizes/font_size = 40
-text = "Health: 0"
+text = "Health 0"
+
+[node name="HiScoreLabel" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -322.525
+offset_right = -176.525
+offset_bottom = 58.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.328, 1, 0.28, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_d78j3")
+theme_override_font_sizes/font_size = 40
+text = "HiScore 0"

@@ -4,18 +4,24 @@ class_name Player
 @export var larve_animated_sprite: AnimatedSprite2D
 @export var butterfly_animated_sprite: AnimatedSprite2D
 
-const BASE_MOVEMENT_SPEED: int = 300
+const BASE_MOVEMENT_SPEED: int = 200
 const BASE_HEALTH: int = 100
 
 var animated_sprite: AnimatedSprite2D
 var size_factor: float = 1.0
-var size_xy_pixels = Vector2(64, 64) * size_factor
+
+var larve_size_xy_pixels = Vector2(32, 32)
+var butterfly_size_xy_pixel = Vector2(64, 64)
 
 var health: int = 100
 var movement_speed: int = BASE_MOVEMENT_SPEED 
 var rotation_speed: float = 6.0  # Radians per second
 var velocity = Vector2.ZERO
 var current_mode = Mode
+
+var collision_shape: CollisionShape2D
+var larve_capsule_shape: CapsuleShape2D
+var butterfly_rect_shape: RectangleShape2D
 
 enum Mode {LARVE, BUTTERFLY}
 
@@ -27,11 +33,11 @@ func _ready() -> void:
 	if !has_node("CollisionArea"):
 		var area = Area2D.new()
 		area.name = "CollisionArea"
-		var shape = CollisionShape2D.new()
-		var circle = CircleShape2D.new()
-		circle.radius = size_xy_pixels.x / 2 / size_factor
-		shape.shape = circle
-		area.add_child(shape)
+		collision_shape = CollisionShape2D.new()
+		larve_capsule_shape = CapsuleShape2D.new()
+		larve_capsule_shape.radius = larve_size_xy_pixels.x / 2 / size_factor
+		collision_shape.shape = larve_capsule_shape
+		area.add_child(collision_shape)
 		add_child(area)
 
 	self.scale = Vector2(self.size_factor, self.size_factor)
