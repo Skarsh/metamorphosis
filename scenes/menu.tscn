@@ -67,4 +67,4 @@ autoplay = true
 [connection signal="mouse_entered" from="PlayButtonTexture" to="." method="_on_play_button_texture_mouse_entered"]
 [connection signal="pressed" from="PlayButtonTexture" to="." method="_on_play_button_texture_pressed"]
 [connection signal="mouse_entered" from="ExitButtonTexture" to="." method="_on_play_button_texture_mouse_entered"]
-[connection signal="pressed" from="ExitButtonTexture" to="." method="_on_play_button_texture_pressed"]
+[connection signal="pressed" from="ExitButtonTexture" to="." method="_on_exit_button_texture_pressed"]

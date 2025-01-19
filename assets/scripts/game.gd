@@ -131,7 +131,7 @@ func end_game() -> void:
 	game_active = false
 	game_started = false
 	$GameOverMenu.show()
-	get_tree().paused = true
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func won_game() -> void:
 	game_active = false
