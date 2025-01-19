@@ -37,12 +37,12 @@ func _ready() -> void:
 	self.scale = Vector2(self.size_factor, self.size_factor)
 
 func _process(delta: float) -> void:
-	if Input.is_action_pressed("move_right"):
+	if Input.is_action_pressed("move_right") || Input.is_action_pressed("ui_right"):
 		rotate(rotation_speed * delta)
-	if Input.is_action_pressed("move_left"):
+	if Input.is_action_pressed("move_left") || Input.is_action_pressed("ui_left"):
 		rotate(-rotation_speed * delta)
 	
-	if Input.is_action_pressed("move_forward"):
+	if Input.is_action_pressed("move_forward") || Input.is_action_pressed("ui_up"):
 		var direction = Vector2.UP.rotated(rotation)
 		position += direction * movement_speed * 2.0 * delta
 		animated_sprite.play("move")

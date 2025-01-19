@@ -3,6 +3,10 @@ extends Node
 @export var hud: Node
 @export var player: Player
 
+
+const viewport_width = 1280
+const viewport_height = 960
+
 var max_repellants = 5
 var repellants: Array[Repellant] = []
 
@@ -97,6 +101,7 @@ func spawn_random_food():
 		randf_range(0, viewport_rect.size.x),
 		randf_range(0, viewport_rect.size.y),
 	)
+
 
 	add_child(food)
 
