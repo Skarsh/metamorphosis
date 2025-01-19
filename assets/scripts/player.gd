@@ -5,6 +5,7 @@ class_name Player
 @export var butterfly_animated_sprite: AnimatedSprite2D
 
 const BASE_MOVEMENT_SPEED: int = 300
+const BASE_HEALTH: int = 100
 
 var animated_sprite: AnimatedSprite2D
 var size_factor: float = 1.0
@@ -36,11 +37,6 @@ func _ready() -> void:
 	self.scale = Vector2(self.size_factor, self.size_factor)
 
 func _process(delta: float) -> void:
-	if current_mode == Mode.LARVE:
-		movement_speed = BASE_MOVEMENT_SPEED
-	else:
-		movement_speed = 2 * BASE_MOVEMENT_SPEED
-
 	if Input.is_action_pressed("move_right"):
 		rotate(rotation_speed * delta)
 	if Input.is_action_pressed("move_left"):

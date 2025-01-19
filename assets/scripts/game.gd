@@ -19,11 +19,17 @@ var repellant_spawn_interval: float = 3.0
 
 var time_since_last_morph: float = 0.0
 var morph_duration: float = 10.0
-const MORPH_SIZE_CRITERIA = 1.5
+const MORPH_SIZE_CRITERIA = 2.0
 
 var time_since_last_outside_bounds_damage: float = 0.0
 const OUTSIDE_BOUNDS_TIME_CRITERIA = 1.0
 const OUTSIDE_BOUNDS_DAMAGE = 10
+
+var time_since_last_movement_increase: float = 0
+const MOVEMENT_SPEED_INCREMENT_TIME_CRITERIA = 1
+const MOVEMENT_INCREASE_INCREMENT: int = 10
+
+const BUTTERFLY_POINT_MODIFIER = 2
 
 func _ready() -> void:
 
@@ -47,6 +53,7 @@ func _process(delta: float) -> void:
 	time_since_last_morph += delta
 	
 	time_since_last_outside_bounds_damage += delta
+	time_since_last_movement_increase += delta
 
 	if time_since_last_food_spawn >= food_spawn_interval:
 		spawn_random_food()
@@ -56,6 +63,10 @@ func _process(delta: float) -> void:
 		spawn_random_repellant()
 		time_since_last_repellant_spawn = 0.0
 	
+	if time_since_last_movement_increase > MOVEMENT_SPEED_INCREMENT_TIME_CRITERIA:
+		player.movement_speed += MOVEMENT_INCREASE_INCREMENT
+		time_since_last_movement_increase = 0.0
+
 	# Morph to butterfly
 	if player.size_factor >= MORPH_SIZE_CRITERIA and player.current_mode == Player.Mode.LARVE:
 		player.animated_sprite = player.butterfly_animated_sprite
@@ -65,6 +76,7 @@ func _process(delta: float) -> void:
 		audio_manager.swap_music()
 		time_since_last_morph = 0.0
 		player.size_factor = 1.0
+		player.health = player.BASE_HEALTH * 2
 	
 	if get_viewport():
 		var viewport_rect = get_viewport().get_visible_rect()
@@ -120,7 +132,10 @@ func spawn_random_repellant():
 		add_child(repellant)
 
 func on_food_eaten(nutrition_value: int) -> void:
-	game_score += nutrition_value
+	if player.current_mode == Player.Mode.LARVE:
+		game_score += nutrition_value
+	else:
+		game_score += BUTTERFLY_POINT_MODIFIER * nutrition_value
 	audio_manager.play("eat")
 
 func on_repellant() -> void:
